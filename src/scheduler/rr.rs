@@ -19,6 +19,7 @@ struct RRProcInfo {
 
 impl Scheduler for RRScheduler {
     fn push(&self, tid: usize) {
+        trace!("in scheduler push");
         self.inner.lock().push(tid);
     }
     fn pop(&self, _cpu_id: usize) -> Option<usize> {
