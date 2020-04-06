@@ -73,6 +73,7 @@ where
     F: Send + 'static + FnOnce() -> T,
     T: Send + 'static,
 {
+    info!("info spawn:")
     trace!("spawn:");
 
     // 注意到下面的问题：
