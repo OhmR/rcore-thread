@@ -101,7 +101,9 @@ impl ThreadPool {
             detached: false,
             context: Some(context),
         });
+        info!("before set-pri in add_pri(), {}", priority);
         self.scheduler.set_priority(tid, priority);
+        info!("after set-pri in add_pir()");
         self.scheduler.push(tid);
         tid
     }
