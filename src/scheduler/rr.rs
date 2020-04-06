@@ -66,6 +66,25 @@ impl RRSchedulerInner {
         trace!("rr push {}", tid - 1);
     }
 
+
+    // fn push_pri(&mut self, tid: Tid, priority: u8) {
+    //     let tid = tid + 1;
+    //     expand(&mut self.infos, tid);
+    //     {
+    //         let info = &mut self.infos[tid];
+    //         assert!(!info.present);
+    //         info.present = true;
+    //         info.priority = priority;
+    //         if info.rest_slice == 0 {
+    //             info!("in push, info.pri is {}", info.priority);
+    //             info.rest_slice = self.max_time_slice * info.priority as usize;
+    //             info!("in push, info.rest_slice is {}", info.rest_slice);
+    //         }
+    //     }
+    //     self._list_add_before(tid, 0);
+    //     trace!("rr push {}", tid - 1);
+    // }
+
     fn pop(&mut self) -> Option<Tid> {
         let ret = match self.infos[0].next {
             0 => None,
@@ -95,6 +114,8 @@ impl RRSchedulerInner {
 
     fn set_priority(&mut self, tid: Tid, priority: u8) {
         info!("before set info.pri in schedule, pri is {}", priority);
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
         let info = &mut self.infos[tid];
         info.priority = priority;
         info!("after set info.pri in schedule, info.pri is {}", info.priority);
