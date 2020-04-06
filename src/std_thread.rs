@@ -109,7 +109,64 @@ where
 
     // 在Processor中创建新的线程
     let context = new_kernel_context(kernel_thread_entry::<F, T>, f as usize);
-    let tid = processor().manager().add(context);
+    let tid = processor().manager().add(context, 1);
+
+    // 接下来看看`JoinHandle::join()`的实现
+    // 了解是如何获取f返回值的
+    return JoinHandle {
+        thread: Thread { tid },
+        mark: PhantomData,
+    };
+}
+
+
+/// Spawns a new thread, returning a JoinHandle for it.
+///
+/// `F`: Type of the function `f`
+/// `T`: Type of the return value of `f`
+/// priority 优先级，默认为1
+pub fn pri_spawn<F, T>(f: F, priority: u8) -> JoinHandle<T>
+where
+    F: Send + 'static + FnOnce() -> T,
+    T: Send + 'static,
+{
+    trace!("spawn:");
+
+    // 注意到下面的问题：
+    // Processor只能从入口地址entry+参数arg创建新线程
+    // 而我们现在需要让它执行一个未知类型的（闭包）函数f
+
+    // 首先把函数本体（代码数据）置于堆空间中
+    let f = Box::into_raw(Box::new(f));
+
+    // 定义一个静态函数作为新线程的入口点
+    // 其参数是函数f在堆上的指针
+    // 这样我们就把函数f传到了一个静态函数内部
+    //
+    // 注意到它具有泛型参数，因此对每一次spawn调用，
+    // 由于F类型是独特的，因此都会生成一个新的kernel_thread_entry
+    extern "C" fn kernel_thread_entry<F, T>(f: usize) -> !
+    where
+        F: Send + 'static + FnOnce() -> T,
+        T: Send + 'static,
+    {
+        // 在静态函数内部：
+        // 根据传进来的指针，恢复f
+        let f = unsafe { Box::from_raw(f as *mut F) };
+        // 调用f，并将其返回值也放在堆上
+        let ret = Box::new(f());
+        // 让Processor退出当前线程
+        // 把f返回值在堆上的指针，以线程返回码的形式传递出去
+        let exit_code = Box::into_raw(ret) as usize;
+        processor().manager().exit(current().id(), exit_code);
+        yield_now();
+        // 再也不会被调度回来了
+        unreachable!()
+    }
+
+    // 在Processor中创建新的线程
+    let context = new_kernel_context(kernel_thread_entry::<F, T>, f as usize);
+    let tid = processor().manager().add(context, priority);
 
     // 接下来看看`JoinHandle::join()`的实现
     // 了解是如何获取f返回值的

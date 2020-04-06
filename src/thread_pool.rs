@@ -16,6 +16,8 @@ struct Thread {
     detached: bool,
     /// The context of the thread.
     context: Option<Box<dyn Context>>,
+    // The priority of the thread.
+    //priority: u8,
 }
 
 pub type Tid = usize;
@@ -71,7 +73,7 @@ impl ThreadPool {
 
     /// Add a new thread
     /// Calls action with tid and thread context
-    pub fn add(&self, mut context: Box<dyn Context>) -> Tid {
+    pub fn add(&self, mut context: Box<dyn Context>, priority: u8) -> Tid {
         let (tid, mut thread) = self.alloc_tid();
         context.set_tid(tid);
         *thread = Some(Thread {
@@ -80,7 +82,9 @@ impl ThreadPool {
             waiter: None,
             detached: false,
             context: Some(context),
+            //priority: 1,
         });
+        self.scheduler.set_priority(tid, priority);
         self.scheduler.push(tid);
         tid
     }
@@ -108,6 +112,11 @@ impl ThreadPool {
     pub fn set_priority(&self, tid: Tid, priority: u8) {
         self.scheduler.set_priority(tid, priority);
     }
+    /*pub fn set_priority(&self, tid: Tid, priority: u8) {
+        let mut proc_lock = self.threads[tid].lock();
+        let mut proc = proc_lock.as_mut().expect("thread not exist");
+        proc.priority = priority;
+    }*/
 
     /// Called by Processor to get a thread to run.
     /// The manager first mark it `Running`,

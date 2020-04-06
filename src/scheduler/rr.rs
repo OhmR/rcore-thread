@@ -12,6 +12,7 @@ struct RRSchedulerInner {
 #[derive(Debug, Default, Copy, Clone)]
 struct RRProcInfo {
     present: bool,
+    priority: u8,
     rest_slice: usize,
     prev: Tid,
     next: Tid,
@@ -19,7 +20,6 @@ struct RRProcInfo {
 
 impl Scheduler for RRScheduler {
     fn push(&self, tid: usize) {
-        trace!("in scheduler push");
         self.inner.lock().push(tid);
     }
     fn pop(&self, _cpu_id: usize) -> Option<usize> {
@@ -28,7 +28,9 @@ impl Scheduler for RRScheduler {
     fn tick(&self, current_tid: usize) -> bool {
         self.inner.lock().tick(current_tid)
     }
-    fn set_priority(&self, _tid: usize, _priority: u8) {}
+    fn set_priority(&self, _tid: usize, _priority: u8) {
+        self.inner.lock().set_priority(_tid, _priority)
+    }
     fn remove(&self, tid: usize) {
         self.inner.lock().remove(tid)
     }
@@ -55,7 +57,7 @@ impl RRSchedulerInner {
             assert!(!info.present);
             info.present = true;
             if info.rest_slice == 0 {
-                info.rest_slice = self.max_time_slice;
+                info.rest_slice = self.max_time_slice * info.priority as usize;
             }
         }
         self._list_add_before(tid, 0);
@@ -87,6 +89,11 @@ impl RRSchedulerInner {
             warn!("current process rest_slice = 0, need reschedule")
         }
         *rest == 0
+    }
+
+    fn set_priority(&mut self, tid: Tid, priority: u8) {
+        let info = &mut self.infos[tid];
+        info.priority = priority;
     }
 
     fn remove(&mut self, tid: Tid) {
