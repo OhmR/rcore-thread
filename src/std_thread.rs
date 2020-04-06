@@ -109,7 +109,7 @@ where
 
     // 在Processor中创建新的线程
     let context = new_kernel_context(kernel_thread_entry::<F, T>, f as usize);
-    let tid = processor().manager().add(context, 1);
+    let tid = processor().manager().add_pri(context, 1);
 
     // 接下来看看`JoinHandle::join()`的实现
     // 了解是如何获取f返回值的
@@ -166,7 +166,7 @@ where
 
     // 在Processor中创建新的线程
     let context = new_kernel_context(kernel_thread_entry::<F, T>, f as usize);
-    let tid = processor().manager().add(context, priority);
+    let tid = processor().manager().add_pri(context, priority);
 
     // 接下来看看`JoinHandle::join()`的实现
     // 了解是如何获取f返回值的

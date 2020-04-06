@@ -73,7 +73,7 @@ impl ThreadPool {
 
     /// Add a new thread
     /// Calls action with tid and thread context
-    pub fn add(&self, mut context: Box<dyn Context>, priority: u8) -> Tid {
+    pub fn add(&self, mut context: Box<dyn Context>) -> Tid {
         let (tid, mut thread) = self.alloc_tid();
         context.set_tid(tid);
         *thread = Some(Thread {
@@ -82,7 +82,24 @@ impl ThreadPool {
             waiter: None,
             detached: false,
             context: Some(context),
-            //priority: 1,
+        });
+        self.scheduler.set_priority(tid, 1);
+        self.scheduler.push(tid);
+        tid
+    }
+
+
+    /// Add a new thread with special priority
+    /// Calls action with tid and thread context
+    pub fn add_pri(&self, mut context: Box<dyn Context>, priority: u8) -> Tid {
+        let (tid, mut thread) = self.alloc_tid();
+        context.set_tid(tid);
+        *thread = Some(Thread {
+            status: Status::Ready,
+            status_after_stop: Status::Ready,
+            waiter: None,
+            detached: false,
+            context: Some(context),
         });
         self.scheduler.set_priority(tid, priority);
         self.scheduler.push(tid);
