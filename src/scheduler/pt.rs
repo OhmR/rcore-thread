@@ -92,7 +92,8 @@ impl PTSchedulerInner {
                 self.queues[0].pop_front()
             }
         };
-        for index in 4..0 {
+        for index in (0..4).rev() {
+            info!("index is {}", index);
             if self.queues[index].len() > 0 {
                 self.active_queue = index;
                 ret = match self.queues[index].pop_front() {
