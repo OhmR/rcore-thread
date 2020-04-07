@@ -87,12 +87,18 @@ impl PTSchedulerInner {
     fn pop(&mut self) -> Option<Tid> {
         info!("in pt pop()");
         self.active_queue = 0;
+        info!("before init ret");
         let mut ret = match self.queues[0].pop_front() {
-            Some(tid) => return Some(tid),
+            Some(tid) => {
+                info!("pop init result is {}", tid);
+                return Some(tid);
+            },
             None => {
+                info!("pop ret init is none");
                 self.queues[0].pop_front()
             }
         };
+        info!("after init ret");
         for index in (0..5).rev() {
             info!("index is {}", index);
             if self.queues[index].len() > 0 {
