@@ -64,6 +64,7 @@ impl Processor {
     /// - eventually that process transfers control
     ///   via switch back to the scheduler.
     pub fn run(&self) -> ! {
+        info!("in run");
         let inner = self.inner();
         loop {
             if let Some(thread) = inner.manager.run(inner.id) {

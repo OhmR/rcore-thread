@@ -141,6 +141,7 @@ impl ThreadPool {
     /// The manager first mark it `Running`,
     /// then take out and return its Context.
     pub(crate) fn run(&self, cpu_id: usize) -> Option<(Tid, Box<dyn Context>)> {
+        info!("in thread_pool run");
         self.scheduler.pop(cpu_id).map(|tid| {
             let mut proc_lock = self.threads[tid].lock();
             let mut proc = proc_lock.as_mut().expect("thread not exist");
