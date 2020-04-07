@@ -91,7 +91,7 @@ impl PTSchedulerInner {
         let mut ret = match self.queues[0].pop_front() {
             Some(tid) => {
                 info!("pop init result is {}", tid);
-                return Some(tid);
+                Some(tid)
             },
             None => {
                 info!("pop ret init is none");
@@ -106,7 +106,7 @@ impl PTSchedulerInner {
                 ret = match self.queues[index].pop_front() {
                     Some(tid) => {
                         info!("pop result is {}", tid);
-                        return Some(tid - 1)},
+                        Some(tid - 1)},
                     None => {
                         self.queues[index].pop_front()
                     }
