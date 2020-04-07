@@ -98,7 +98,7 @@ impl PTSchedulerInner {
                 self.active_queue = index;
                 ret = match self.queues[index].pop_front() {
                     Some(tid) => {
-        info!("pop result is {}", tid);return Some(tid)},
+        info!("pop result is {}", tid);return Some(tid - 1)},
                     None => {
                         self.queues[index].pop_front()
                     }
