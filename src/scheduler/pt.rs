@@ -58,8 +58,11 @@ impl PTSchedulerInner {
             if info.rest_slice == 0 {
                 info.rest_slice = self.max_time_slice;
             }
+            info!("in push, info.pri is {}", info.priority);
             let priority = info.priority;
             self.queues[priority as usize].push_back(tid);
+            info!("in push, info.rest_slice is {}", info.rest_slice);
+            info!("in push, queues[pri].len() is {}", self.queues[priority].len());
         }
         /* 
         {
