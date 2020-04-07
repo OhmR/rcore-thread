@@ -125,7 +125,7 @@ impl RRSchedulerInner {
         self._list_remove(tid + 1);
         self.infos[tid + 1].present = false;
         info!("remove thread {}", tid);
-        info!("current length is {}", self.infos.len());
+        // info!("current length is {}", self.infos.len());
     }
 }
 
