@@ -114,7 +114,6 @@ impl PTSchedulerInner {
 
     fn tick(&mut self, current: Tid) -> bool {
         let current = current + 1;
-        info!("in tick, tid is {}", current);
         expand(&mut self.infos, current);
 
         let rest = &mut self.infos[current].rest_slice;
@@ -123,6 +122,7 @@ impl PTSchedulerInner {
         } else {
             warn!("current process rest_slice = 0, need reschedule")
         }
+        info!("in tick, tid is {}, rest time is {}", current, rest);
         *rest == 0
     }
 
