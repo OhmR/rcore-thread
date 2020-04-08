@@ -88,7 +88,7 @@ impl PTSchedulerInner {
         info!("in pt pop()");
         self.active_queue = 0;
         info!("before init ret");
-        let mut ret = match self.queues[0].pop_front() {
+        let mut ret = None; /*= match self.queues[0].pop_front() {
             Some(tid) => {
                 info!("pop init result is {}", tid);
                 Some(tid)
@@ -97,7 +97,7 @@ impl PTSchedulerInner {
                 info!("pop ret init is none");
                 self.queues[0].pop_front()
             }
-        };
+        };*/
         info!("after init ret");
         for index in (0..5).rev() {
             info!("index is {}", index);
@@ -115,6 +115,9 @@ impl PTSchedulerInner {
             }
         }
         info!("end pop");
+        if ret == None {
+            info!("pop result is None");
+        }
         ret
     }
 
