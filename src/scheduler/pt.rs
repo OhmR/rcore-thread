@@ -61,7 +61,7 @@ impl PTSchedulerInner {
             info!("in push, info.pri is {}", info.priority);
             info!("in push, tid is {}", tid);
             let priority = info.priority;
-            self.queues[priority as usize - 1].push_back(tid);
+            self.queues[priority as usize].push_back(tid);
             info!("in push, info.rest_slice is {}", info.rest_slice);
             info!("in push, queues[pri].len() is {}", self.queues[priority as usize].len());
         }
@@ -138,9 +138,9 @@ impl PTSchedulerInner {
         expand(&mut self.infos, tid);
         let info = &mut self.infos[tid];
         if priority > 5 {
-            info.priority = 5;
+            info.priority = 4;
         } else {
-            info.priority = priority;
+            info.priority = priority - 1;
         }
         info!("after set info.pri in schedule, info.pri is {}", info.priority);
     }
