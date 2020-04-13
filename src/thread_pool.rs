@@ -17,7 +17,7 @@ struct Thread {
     /// The context of the thread.
     context: Option<Box<dyn Context>>,
     // The priority of the thread.
-    //priority: u8,
+    priority: u8,
 }
 
 pub type Tid = usize;
@@ -82,6 +82,7 @@ impl ThreadPool {
             waiter: None,
             detached: false,
             context: Some(context),
+            priority: 0,
         });
         self.scheduler.set_priority(tid, 1);
         self.scheduler.push(tid);
@@ -100,6 +101,7 @@ impl ThreadPool {
             waiter: None,
             detached: false,
             context: Some(context),
+            priority: 0,
         });
         info!("before set-pri in add_pri(), {}", priority);
         self.scheduler.set_priority(tid, priority);
@@ -107,6 +109,7 @@ impl ThreadPool {
         self.scheduler.push(tid);
         tid
     }
+
 
     /// Make thread `tid` time slice -= 1.
     /// Return true if time slice == 0.
@@ -130,7 +133,15 @@ impl ThreadPool {
     /// Set the priority of thread `tid`
     pub fn set_priority(&self, tid: Tid, priority: u8) {
         self.scheduler.set_priority(tid, priority);
+        let mut proc_lock = self.threads[tid].lock();
+        proc_lock.as_mut().unwrap().priority = priority;
     }
+
+    /// Get thread[tid].pri
+    pub fn get_pri(&self, tid: Tid) -> u8 {
+        self.threads[tid].lock().as_ref().unwrap().priority
+    }
+
     /*pub fn set_priority(&self, tid: Tid, priority: u8) {
         let mut proc_lock = self.threads[tid].lock();
         let mut proc = proc_lock.as_mut().expect("thread not exist");
@@ -141,7 +152,7 @@ impl ThreadPool {
     /// The manager first mark it `Running`,
     /// then take out and return its Context.
     pub(crate) fn run(&self, cpu_id: usize) -> Option<(Tid, Box<dyn Context>)> {
-        info!("in thread_pool run");
+        // info!("in thread_pool run");
         self.scheduler.pop(cpu_id).map(|tid| {
             let mut proc_lock = self.threads[tid].lock();
             let mut proc = proc_lock.as_mut().expect("thread not exist");

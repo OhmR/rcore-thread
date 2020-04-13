@@ -64,6 +64,11 @@ pub fn sleep(dur: Duration) {
     }
 }
 
+// Get the current thread priority
+pub fn get_pri() -> u8{
+    processor().manager().get_pri(current().id())
+}
+
 /// Spawns a new thread, returning a JoinHandle for it.
 ///
 /// `F`: Type of the function `f`
