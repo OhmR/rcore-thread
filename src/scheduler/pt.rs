@@ -112,20 +112,20 @@ impl PTSchedulerInner {
     fn tick(&mut self, current: Tid) -> bool {
         let current = current + 1;
         expand(&mut self.infos, current);
-        
+
         let info = &mut self.infos[current];
         if info.start_flag {
             info.tick_num += 1;
         }
 
-        let rest = &mut self.infos[current].rest_slice;
-        if *rest > 0 {
-            *rest -= 1;
+        //let rest = &mut self.infos[current].rest_slice;
+        if info.rest_slice > 0 {
+            info.rest_slice -= 1;
         } else {
             warn!("current process rest_slice = 0, need reschedule")
         }
-        info!("in tick, tid is {}, rest time is {}", current, rest);
-        *rest == 0
+        info!("in tick, tid is {}, rest time is {}, tick num is {}", current, info.rest_slice, info.tick_num);
+        info.rest_slice == 0
     }
 
     fn set_priority(&mut self, tid: Tid, priority: u8) {
@@ -170,6 +170,7 @@ impl PTSchedulerInner {
 
 impl PTSchedulerInner {
     fn start(&mut self, tid: usize) {
+        info!("{} start tick num", tid);
         let tid = tid + 1;
         expand(&mut self.infos, tid);
         let info = &mut self.infos[tid];
@@ -183,6 +184,7 @@ impl PTSchedulerInner {
         info.tick_num
     }
     fn end(&mut self, tid: usize) {
+        info!("{} end tick num", tid);
         let tid = tid + 1;
         expand(&mut self.infos, tid);
         let info = &mut self.infos[tid];
