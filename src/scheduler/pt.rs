@@ -15,6 +15,8 @@ struct PTSchedulerInner {
 struct PTProcInfo {
     priority: u8,
     rest_slice: usize,
+    tick_num: u8,
+    start_flag: bool,
 }
 
 impl Scheduler for PTScheduler {
@@ -35,6 +37,15 @@ impl Scheduler for PTScheduler {
     }
     fn remove(&self, tid: usize) {
         self.inner.lock().remove(tid)
+    }
+    fn start(&self, tid: usize) {
+        self.inner.lock().start(tid)
+    }
+    fn get_tick(&self, tid: usize) -> u8 {
+        self.inner.lock().get_tick(tid)
+    }
+    fn end(&self, tid: usize) {
+        self.inner.lock().end(tid)
     }
 }
 
@@ -68,39 +79,13 @@ impl PTSchedulerInner {
             info!("in push, info.rest_slice is {}", info.rest_slice);
             info!("in push, queues[pri].len() is {}", self.queues[priority as usize].len());
         }
-        /* 
-        {
-            let info = &mut self.infos[tid];
-            assert!(!info.present);
-            info.present = true;
-            let pri = info.priority;
-            expand(&mut self.sch_infos, pri as usize);
-
-            if info.rest_slice == 0 {
-                info!("in push, info.pri is {}", info.priority);
-                info.rest_slice = self.max_time_slice;
-                info!("in push, info.rest_slice is {}", info.rest_slice);
-            }
-            self.sch_infos[pri as usize].push(*info);
-        }
-        self._list_add_before(tid, 0);
-        trace!("pt push {}", tid - 1); */
     }
 
     fn pop(&mut self) -> Option<Tid> {
         info!("in pt pop()");
         self.active_queue = 0;
         info!("before init ret");
-        let mut ret = None; /*= match self.queues[0].pop_front() {
-            Some(tid) => {
-                info!("pop init result is {}", tid);
-                Some(tid)
-            },
-            None => {
-                info!("pop ret init is none");
-                self.queues[0].pop_front()
-            }
-        };*/
+        let mut ret = None;
         info!("after init ret");
         for index in (0..5).rev() {
             info!("index is {}", index);
@@ -127,6 +112,11 @@ impl PTSchedulerInner {
     fn tick(&mut self, current: Tid) -> bool {
         let current = current + 1;
         expand(&mut self.infos, current);
+        
+        let info = &mut self.infos[current];
+        if info.start_flag {
+            info.tick_num += 1;
+        }
 
         let rest = &mut self.infos[current].rest_slice;
         if *rest > 0 {
@@ -175,11 +165,28 @@ impl PTSchedulerInner {
                 break;
             }
         }
-        // let next = self.infos[i].next;
-        // let prev = self.infos[i].prev;
-        // self.infos[next].prev = prev;
-        // self.infos[prev].next = next;
-        // self.infos[i].next = 0;
-        // self.infos[i].prev = 0;
+    }
+}
+
+impl PTSchedulerInner {
+    fn start(&mut self, tid: usize) {
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
+        let info = &mut self.infos[tid];
+        info.start_flag = true;
+        info.tick_num = 0;
+    }
+    fn get_tick(&mut self, tid: usize) -> u8 {
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
+        let info = &mut self.infos[tid];
+        info.tick_num
+    }
+    fn end(&mut self, tid: usize) {
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
+        let info = &mut self.infos[tid];
+        info.start_flag = false;
+        info.tick_num = 0;
     }
 }

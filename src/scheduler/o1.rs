@@ -29,6 +29,9 @@ impl Scheduler for O1Scheduler {
     fn remove(&self, _tid: usize) {
         unimplemented!()
     }
+    fn start(&self, _tid: usize) {}
+    fn get_tick(&self, _tid: usize) -> u8 {1}
+    fn end(&self, _tid: usize) {}
 }
 
 impl O1Scheduler {

@@ -81,6 +81,9 @@ impl Scheduler for StrideScheduler {
     fn remove(&self, tid: usize) {
         self.inner.lock().remove(tid);
     }
+    fn start(&self, _tid: usize) {}
+    fn get_tick(&self, _tid: usize) -> u8 {1}
+    fn end(&self, _tid: usize) {}
 }
 
 impl StrideScheduler {

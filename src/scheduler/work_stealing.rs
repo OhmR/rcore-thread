@@ -81,4 +81,10 @@ impl Scheduler for WorkStealingScheduler {
     fn cal_priority(&self, _priority: u8) -> u8 {1}
 
     fn remove(&self, _tid: usize) {}
+
+    fn start(&self, _tid: usize) {}
+    
+    fn get_tick(&self, _tid: usize) -> u8 {1}
+
+    fn end(&self, _tid: usize) {}
 }

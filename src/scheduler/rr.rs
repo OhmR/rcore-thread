@@ -16,6 +16,8 @@ struct RRProcInfo {
     rest_slice: usize,
     prev: Tid,
     next: Tid,
+    tick_num: u8,
+    start_flag: bool,
 }
 
 impl Scheduler for RRScheduler {
@@ -36,6 +38,15 @@ impl Scheduler for RRScheduler {
     }
     fn remove(&self, tid: usize) {
         self.inner.lock().remove(tid)
+    }
+    fn start(&self, tid: usize) {
+        self.inner.lock().start(tid)
+    }
+    fn get_tick(&self, tid: usize) -> u8 {
+        self.inner.lock().get_tick(tid)
+    }
+    fn end(&self, tid: usize) {
+        self.inner.lock().end(tid)
     }
 }
 
@@ -106,6 +117,11 @@ impl RRSchedulerInner {
         expand(&mut self.infos, current);
         assert!(!self.infos[current].present);
 
+        let info = &mut self.infos[current];
+        if info.start_flag {
+            info.tick_num += 1;
+        }
+
         let rest = &mut self.infos[current].rest_slice;
         if *rest > 0 {
             *rest -= 1;
@@ -155,5 +171,28 @@ impl RRSchedulerInner {
         self.infos[prev].next = next;
         self.infos[i].next = 0;
         self.infos[i].prev = 0;
+    }
+}
+
+impl RRSchedulerInner {
+    fn start(&mut self, tid: usize) {
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
+        let info = &mut self.infos[tid];
+        info.start_flag = true;
+        info.tick_num = 0;
+    }
+    fn get_tick(&mut self, tid: usize) -> u8 {
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
+        let info = &mut self.infos[tid];
+        info.tick_num
+    }
+    fn end(&mut self, tid: usize) {
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
+        let info = &mut self.infos[tid];
+        info.start_flag = false;
+        info.tick_num = 0;
     }
 }
