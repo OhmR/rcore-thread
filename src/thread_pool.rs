@@ -94,6 +94,7 @@ impl ThreadPool {
     /// Calls action with tid and thread context
     pub fn add_pri(&self, mut context: Box<dyn Context>, priority: u8) -> Tid {
         let (tid, mut thread) = self.alloc_tid();
+        let pri_temp = self.scheduler.cal_priority(priority);
         context.set_tid(tid);
         *thread = Some(Thread {
             status: Status::Ready,
@@ -101,7 +102,7 @@ impl ThreadPool {
             waiter: None,
             detached: false,
             context: Some(context),
-            priority: priority,
+            priority: pri_temp,
         });
         info!("before set-pri in add_pri(), {}", priority);
         self.scheduler.set_priority(tid, priority);

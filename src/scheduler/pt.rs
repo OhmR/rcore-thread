@@ -30,6 +30,9 @@ impl Scheduler for PTScheduler {
     fn set_priority(&self, _tid: usize, _priority: u8) {
         self.inner.lock().set_priority(_tid, _priority)
     }
+    fn cal_priority(&self, _priority: u8) -> u8 {
+        self.inner.lock().cal_priority(_priority)
+    }
     fn remove(&self, tid: usize) {
         self.inner.lock().remove(tid)
     }
@@ -146,6 +149,14 @@ impl PTSchedulerInner {
             info.priority = priority - 1;
         }
         info!("after set info.pri in schedule, info.pri is {}", info.priority);
+    }
+
+    fn cal_priority(&mut self, priority: u8) -> u8 {
+        if priority > 5 {
+            5
+        } else {
+            priority
+        }
     }
 
     fn remove(&mut self, tid: Tid) {

@@ -75,6 +75,9 @@ impl Scheduler for StrideScheduler {
     fn set_priority(&self, tid: usize, priority: u8) {
         self.inner.lock().set_priority(tid, priority);
     }
+    fn cal_priority(&self, _priority: u8) -> u8 {
+        self.inner.lock().cal_priority(_priority)
+    }
     fn remove(&self, tid: usize) {
         self.inner.lock().remove(tid);
     }
@@ -138,6 +141,10 @@ impl StrideSchedulerInner {
     fn set_priority(&mut self, tid: Tid, priority: u8) {
         self.infos[tid].priority = priority;
         trace!("stride {} priority = {}", tid, priority);
+    }
+
+    fn cal_priority(&mut self, priority: u8) -> u8 {
+        priority
     }
 
     fn remove(&mut self, tid: Tid) {

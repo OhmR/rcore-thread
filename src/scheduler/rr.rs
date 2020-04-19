@@ -31,6 +31,9 @@ impl Scheduler for RRScheduler {
     fn set_priority(&self, _tid: usize, _priority: u8) {
         self.inner.lock().set_priority(_tid, _priority)
     }
+    fn cal_priority(&self, _priority: u8) -> u8 {
+        self.inner.lock().cal_priority(_priority)
+    }
     fn remove(&self, tid: usize) {
         self.inner.lock().remove(tid)
     }
@@ -119,6 +122,10 @@ impl RRSchedulerInner {
         let info = &mut self.infos[tid];
         info.priority = priority;
         info!("after set info.pri in schedule, info.pri is {}", info.priority);
+    }
+
+    fn cal_priority(&mut self, priority: u8) -> u8 {
+        priority
     }
 
     fn remove(&mut self, tid: Tid) {

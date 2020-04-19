@@ -28,6 +28,8 @@ pub trait Scheduler: 'static {
     fn tick(&self, current_tid: Tid) -> bool;
     /// Set priority of a thread.
     fn set_priority(&self, tid: Tid, priority: u8);
+    /// 
+    fn cal_priority(&self, priority: u8) -> u8;
     /// remove a thread in ready queue.
     fn remove(&self, tid: Tid);
 }
