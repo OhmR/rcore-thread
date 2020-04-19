@@ -103,7 +103,7 @@ impl PTSchedulerInner {
             }
         }
         if ret == None {
-            info!("pop result is None");
+            // info!("pop result is None");
         }
         ret
     }
