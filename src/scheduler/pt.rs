@@ -72,28 +72,28 @@ impl PTSchedulerInner {
             if info.rest_slice == 0 {
                 info.rest_slice = self.max_time_slice;
             }
-            info!("in push, info.pri is {}", info.priority);
-            info!("in push, tid is {}", tid);
+            // info!("in push, info.pri is {}", info.priority);
+            // info!("in push, tid is {}", tid);
             let priority = info.priority;
             self.queues[priority as usize].push_back(tid);
-            info!("in push, info.rest_slice is {}", info.rest_slice);
-            info!("in push, queues[pri].len() is {}", self.queues[priority as usize].len());
+            // info!("in push, info.rest_slice is {}", info.rest_slice);
+            // info!("in push, queues[pri].len() is {}", self.queues[priority as usize].len());
         }
     }
 
     fn pop(&mut self) -> Option<Tid> {
-        info!("in pt pop()");
+        // info!("in pt pop()");
         self.active_queue = 0;
-        info!("before init ret");
+        // info!("before init ret");
         let mut ret = None;
-        info!("after init ret");
+        // info!("after init ret");
         for index in (0..5).rev() {
-            info!("index is {}", index);
+            // info!("index is {}", index);
             if self.queues[index].len() > 0 {
                 self.active_queue = index;
                 ret = match self.queues[index].pop_front() {
                     Some(tid) => {
-                        info!("pop result is {}", tid);
+                        // info!("pop result is {}", tid);
                         Some(tid - 1)},
                     None => {
                         self.queues[index].pop_front()
@@ -102,7 +102,6 @@ impl PTSchedulerInner {
                 break;
             }
         }
-        info!("end pop");
         if ret == None {
             info!("pop result is None");
         }
@@ -129,7 +128,6 @@ impl PTSchedulerInner {
     }
 
     fn set_priority(&mut self, tid: Tid, priority: u8) {
-        info!("before set info.pri in schedule, pri is {}", priority);
         let tid = tid + 1;
         expand(&mut self.infos, tid);
         let info = &mut self.infos[tid];
@@ -138,7 +136,6 @@ impl PTSchedulerInner {
         } else {
             info.priority = priority - 1;
         }
-        info!("after set info.pri in schedule, info.pri is {}", info.priority);
     }
 
     fn cal_priority(&mut self, priority: u8) -> u8 {
