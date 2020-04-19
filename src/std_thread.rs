@@ -69,6 +69,18 @@ pub fn get_pri() -> u8{
     processor().manager().get_pri(current().id())
 }
 
+pub fn start() {
+    processor().manager().start(current().id())
+}
+
+pub fn get_tick() -> u8 {
+    processor().manager().get_tick(current().id())
+}
+
+pub fn end() {
+    processor().manager().end(current().id())
+}
+
 /// Spawns a new thread, returning a JoinHandle for it.
 ///
 /// `F`: Type of the function `f`
