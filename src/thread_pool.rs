@@ -142,12 +142,18 @@ impl ThreadPool {
     pub fn get_pri(&self, tid: Tid) -> u8 {
         self.threads[tid].lock().as_ref().unwrap().priority
     }
+    
+    pub fn start(&self, tid: Tid) {
+        self.scheduler.start(tid);
+    }
 
-    /*pub fn set_priority(&self, tid: Tid, priority: u8) {
-        let mut proc_lock = self.threads[tid].lock();
-        let mut proc = proc_lock.as_mut().expect("thread not exist");
-        proc.priority = priority;
-    }*/
+    pub fn get_tick(&self, tid: Tid) -> u8 {
+        self.scheduler.get_tick(tid)
+    }
+
+    pub fn end(&self, tid: Tid) {
+        self.scheduler.end(tid);
+    }
 
     /// Called by Processor to get a thread to run.
     /// The manager first mark it `Running`,
