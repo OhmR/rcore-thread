@@ -82,7 +82,7 @@ impl ThreadPool {
             waiter: None,
             detached: false,
             context: Some(context),
-            priority: 0,
+            priority: 1,
         });
         self.scheduler.set_priority(tid, 1);
         self.scheduler.push(tid);
@@ -101,7 +101,7 @@ impl ThreadPool {
             waiter: None,
             detached: false,
             context: Some(context),
-            priority: 0,
+            priority: priority,
         });
         info!("before set-pri in add_pri(), {}", priority);
         self.scheduler.set_priority(tid, priority);
