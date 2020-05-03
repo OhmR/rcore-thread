@@ -81,6 +81,14 @@ pub fn end() {
     processor().manager().end(current().id())
 }
 
+pub fn set_success(value: bool) {
+    processor().manager().set_success(current().id(), value)
+}
+
+pub fn get_success() -> bool {
+    processor().manager().get_success(current().id())
+}
+
 /// Spawns a new thread, returning a JoinHandle for it.
 ///
 /// `F`: Type of the function `f`

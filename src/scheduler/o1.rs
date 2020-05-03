@@ -32,6 +32,8 @@ impl Scheduler for O1Scheduler {
     fn start(&self, _tid: usize) {}
     fn get_tick(&self, _tid: usize) -> u8 {1}
     fn end(&self, _tid: usize) {}
+    fn set_success(&self, _tid: usize, _value: bool) {}
+    fn get_success(&self, _tid: usize) -> bool {true}
 }
 
 impl O1Scheduler {

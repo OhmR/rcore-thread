@@ -38,6 +38,10 @@ pub trait Scheduler: 'static {
     fn get_tick(&self, tid:Tid) -> u8;
     /// End and reset tick time
     fn end(&self, tid:Tid);
+    /// set spin success value
+    fn set_success(&self, tid:Tid, value: bool);
+    /// get current spin status
+    fn get_success(&self, tid:Tid) -> bool;
 }
 
 fn expand<T: Default + Clone>(vec: &mut Vec<T>, id: usize) {

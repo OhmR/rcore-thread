@@ -18,6 +18,7 @@ struct RRProcInfo {
     next: Tid,
     tick_num: u8,
     start_flag: bool,
+    success: bool,
 }
 
 impl Scheduler for RRScheduler {
@@ -47,6 +48,12 @@ impl Scheduler for RRScheduler {
     }
     fn end(&self, tid: usize) {
         self.inner.lock().end(tid)
+    }
+    fn set_success(&self, tid:usize, value: bool) {
+        self.inner.lock().set_success(tid, value)
+    }
+    fn get_success(&self, tid:usize) -> bool {
+        self.inner.lock().get_success(tid)
     }
 }
 
@@ -194,5 +201,17 @@ impl RRSchedulerInner {
         let info = &mut self.infos[tid];
         info.start_flag = false;
         info.tick_num = 0;
+    }
+    fn set_success(&mut self, tid: usize, value: bool) {
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
+        let info = &mut self.infos[tid];
+        info.success = value;
+    }
+    fn get_success(&mut self, tid: usize) -> bool {
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
+        let info = &mut self.infos[tid];
+        info.success
     }
 }

@@ -153,6 +153,14 @@ impl ThreadPool {
         self.scheduler.end(tid);
     }
 
+    pub fn set_success(&self, tid: Tid, value: bool) {
+        self.scheduler.set_success(tid, value);
+    }
+
+    pub fn get_success(&self, tid: Tid) -> bool {
+        self.scheduler.get_success(tid)
+    }
+
     /// Called by Processor to get a thread to run.
     /// The manager first mark it `Running`,
     /// then take out and return its Context.
