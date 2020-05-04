@@ -181,6 +181,7 @@ impl PTSchedulerInner {
         info.start_flag = true;
         info.tick_num = 0;
         info.rest_slice = 0;
+        info.success = false;
     }
     fn get_tick(&mut self, tid: usize) -> u8 {
         let tid = tid + 1;

@@ -188,6 +188,7 @@ impl RRSchedulerInner {
         let info = &mut self.infos[tid];
         info.start_flag = true;
         info.tick_num = 0;
+        info.success = false;
     }
     fn get_tick(&mut self, tid: usize) -> u8 {
         let tid = tid + 1;

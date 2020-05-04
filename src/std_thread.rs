@@ -81,8 +81,8 @@ pub fn end() {
     processor().manager().end(current().id())
 }
 
-pub fn set_success(value: bool) {
-    processor().manager().set_success(current().id(), value)
+pub fn set_success(tid: usize, value: bool) {
+    processor().manager().set_success(tid, value)
 }
 
 pub fn get_success() -> bool {
