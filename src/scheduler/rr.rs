@@ -211,6 +211,7 @@ impl RRSchedulerInner {
         expand(&mut self.infos, tid);
         let info = &mut self.infos[tid];
         info.success = value;
+        info.tick_num += 1;
     }
     fn get_success(&mut self, tid: usize) -> bool {
         let tid = tid + 1;
