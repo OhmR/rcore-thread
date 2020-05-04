@@ -54,6 +54,9 @@ impl Scheduler for PTScheduler {
     fn get_success(&self, tid:usize) -> bool {
         self.inner.lock().get_success(tid)
     }
+    fn reset_slice(&self, tid:usize) {
+        self.inner.lock().reset_slice(tid)
+    }
 }
 
 impl PTScheduler {
@@ -196,6 +199,13 @@ impl PTSchedulerInner {
         let info = &mut self.infos[tid];
         info.start_flag = false;
         info.tick_num = 0;
+    }
+    fn reset_slice(&mut self, tid: usize ) {
+        info!("{} reset rest slice", tid);
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
+        let info = &mut self.infos[tid];
+        info.rest_slice = 0;
     }
     fn set_success(&mut self, tid: usize, value: bool) {
         let tid = tid + 1;

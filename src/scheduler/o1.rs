@@ -34,6 +34,7 @@ impl Scheduler for O1Scheduler {
     fn end(&self, _tid: usize) {}
     fn set_success(&self, _tid: usize, _value: bool) {}
     fn get_success(&self, _tid: usize) -> bool {true}
+    fn reset_slice(&self, _tid:usize) {}
 }
 
 impl O1Scheduler {

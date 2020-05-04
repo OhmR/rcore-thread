@@ -55,6 +55,9 @@ impl Scheduler for RRScheduler {
     fn get_success(&self, tid:usize) -> bool {
         self.inner.lock().get_success(tid)
     }
+    fn reset_slice(&self, tid:usize) {
+        self.inner.lock().reset_slice(tid)
+    }
 }
 
 impl RRScheduler {
@@ -214,5 +217,12 @@ impl RRSchedulerInner {
         expand(&mut self.infos, tid);
         let info = &mut self.infos[tid];
         info.success
+    }
+    fn reset_slice(&mut self, tid: usize ) {
+        info!("{} reset rest slice", tid);
+        let tid = tid + 1;
+        expand(&mut self.infos, tid);
+        let info = &mut self.infos[tid];
+        info.rest_slice = 0;
     }
 }

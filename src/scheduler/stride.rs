@@ -87,6 +87,7 @@ impl Scheduler for StrideScheduler {
 
     fn set_success(&self, _tid:usize, _value: bool) {}
     fn get_success(&self, _tid:usize) -> bool {true}
+    fn reset_slice(&self, _tid:usize) {}
 }
 
 impl StrideScheduler {

@@ -161,6 +161,10 @@ impl ThreadPool {
         self.scheduler.get_success(tid)
     }
 
+    pub fn reset_slice(&self, tid: Tid) {
+        self.scheduler.reset_slice(tid)
+    }
+
     /// Called by Processor to get a thread to run.
     /// The manager first mark it `Running`,
     /// then take out and return its Context.

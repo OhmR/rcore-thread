@@ -42,6 +42,8 @@ pub trait Scheduler: 'static {
     fn set_success(&self, tid:Tid, value: bool);
     /// get current spin status
     fn get_success(&self, tid:Tid) -> bool;
+    ///
+    fn reset_slice(&self, tid:Tid);
 }
 
 fn expand<T: Default + Clone>(vec: &mut Vec<T>, id: usize) {

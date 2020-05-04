@@ -89,6 +89,9 @@ pub fn get_success() -> bool {
     processor().manager().get_success(current().id())
 }
 
+pub fn reset_slice() {
+    processor().manager().reset_slice(current().id())
+}
 /// Spawns a new thread, returning a JoinHandle for it.
 ///
 /// `F`: Type of the function `f`
