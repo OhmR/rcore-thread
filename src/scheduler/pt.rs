@@ -205,8 +205,11 @@ impl PTSchedulerInner {
         let tid = tid + 1;
         expand(&mut self.infos, tid);
         let info = &mut self.infos[tid];
+        info!("0");
         info.rest_slice = 0;
+        info!("1");
         info.tick_num += 1;
+        info!("{} finish reset rest slice", tid);
     }
     fn set_success(&mut self, tid: usize, value: bool) {
         let tid = tid + 1;
